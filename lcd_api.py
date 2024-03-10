@@ -60,6 +60,16 @@ class LcdApi:
         self.hal_write_command(self.LCD_ENTRY_MODE | self.LCD_ENTRY_INC)
         self.hide_cursor()
         self.display_on()
+        
+        #Setup polish characters
+        self.custom_char(0, bytearray([0x00,0x0E,0x01,0x0F,0x11,0x0F,0x04,0x06])) #ą
+        self.custom_char(1, bytearray([0x00,0x0E,0x11,0x1F,0x10,0x0E,0x04,0x06])) #ę
+        self.custom_char(2, bytearray([0x0C,0x04,0x06,0x0C,0x04,0x04,0x0E,0x00])) #ł
+        self.custom_char(3, bytearray([0x02,0x04,0x0E,0x11,0x11,0x11,0x0E,0x0]))  #ó
+        self.custom_char(4, bytearray([0x02,0x04,0x0E,0x10,0x10,0x11,0x0E,0x00])) #ć
+        self.custom_char(5, bytearray([0x02,0x04,0x16,0x19,0x11,0x11,0x11,0x00])) #ń
+        self.custom_char(6, bytearray([0x02,0x04,0x0E,0x10,0x0E,0x01,0x1E,0x00])) #ś
+        self.custom_char(7, bytearray([0x02,0x04,0x1F,0x02,0x04,0x08,0x1F,0x00])) #ż, ź
 
     def clear(self):
         # Clears the LCD display and moves the cursor to the top left corner
@@ -148,7 +158,26 @@ class LcdApi:
         # Write the indicated string to the LCD at the current cursor
         # position and advances the cursor position appropriately.
         for char in string:
-            self.putchar(char)
+            if char.lower() not in ["ą","ę","ł","ó","ć","ń","ś","ż","ź"]:
+                self.putchar(char)
+            #Polish characters
+            else:
+                if char.lower() == "ą":
+                    self.putchar(chr(0))
+                elif char.lower() == "ę":
+                    self.putchar(chr(1))
+                elif char.lower() == "ł":
+                    self.putchar(chr(2))
+                elif char.lower() == "ó":
+                    self.putchar(chr(3))
+                elif char.lower() == "ć":
+                    self.putchar(chr(4))
+                elif char.lower() == "ń":
+                    self.putchar(chr(5))
+                elif char.lower() == "ś":
+                    self.putchar(chr(6))
+                elif char.lower() in ["ż","ź"]:
+                    self.putchar(chr(7))
 
     def custom_char(self, location, charmap):
         # Write a character to one of the 8 CGRAM locations, available
